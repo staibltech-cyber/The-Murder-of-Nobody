@@ -109,13 +109,6 @@ export function ShreeVedantaGSTGame({ onSuccess, onClose, initialStep = 1, onSte
                   </div>
                 </div>
 
-                <div className="text-center py-6 bg-orange-500/5 border border-orange-500/20 rounded-2xl">
-                  <span className="text-xs text-orange-500/70 uppercase tracking-widest font-black block mb-2">Target GSTIN</span>
-                  <div className="text-3xl md:text-4xl font-mono font-black tracking-widest text-apple-white">
-                    29<span className="text-orange-500">AADVS8821B</span>1Z3
-                  </div>
-                </div>
-
                 <button 
                   onClick={() => setStep(2)}
                   className="w-full py-4 bg-orange-600 text-white font-black rounded-xl hover:bg-orange-500 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
@@ -163,7 +156,7 @@ export function ShreeVedantaGSTGame({ onSuccess, onClose, initialStep = 1, onSte
 
                 <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl">
                   <p className="text-[10px] text-blue-400 uppercase tracking-widest font-bold mb-1">System Note</p>
-                  <p className="text-xs text-muted-grey">The PAN is the core identifier. Looking up the PAN segment will reveal the registered entity and its associated directors.</p>
+                  <p className="text-xs text-muted-grey">The PAN is the core identifier. Looking up the PAN segment will reveal the registered entity (SV Distributors PVT LTD) and its associated directors.</p>
                 </div>
 
                 <div className="flex gap-3">

@@ -154,21 +154,6 @@ export function TheLastStraw({
   if (correctCount === 5) status = "Accepted";
   else if (correctCount >= 3) status = "Filed with notes";
 
-  const resetQuiz = () => {
-    const newAnswers = { ...answers };
-    Object.keys(newAnswers).forEach(key => {
-      const k = Number(key);
-      if (!newAnswers[k].isCorrect) {
-        delete newAnswers[k];
-      }
-    });
-    setAnswers(newAnswers);
-    const firstUnanswered = QUESTIONS.find(q => !newAnswers[q.id])?.id || 1;
-    setCurrentStep(firstUnanswered);
-    setIsQuizComplete(false);
-    setIsCaseFiled(false);
-  };
-
   return (
     <div className="min-h-screen bg-black text-apple-white p-6 md:p-12 font-sans selection:bg-crimson selection:text-white">
       <div className="max-w-3xl mx-auto space-y-16 pb-32">
@@ -337,22 +322,46 @@ export function TheLastStraw({
                 </div>
               </div>
 
+              {Object.values(answers).some(a => !a.isCorrect) && (
+                <div className="space-y-6 p-8 bg-crimson/5 border border-crimson/20 rounded-3xl">
+                  <h4 className="text-crimson font-black uppercase tracking-widest text-xs flex items-center gap-2">
+                    <AlertCircle size={14} /> Incorrect Findings Summary
+                  </h4>
+                  <div className="space-y-6">
+                    {QUESTIONS.map(q => {
+                      const answer = answers[q.id];
+                      if (answer && !answer.isCorrect) {
+                        const correctAnswerText = q.type === 'text' 
+                          ? q.correctAnswer 
+                          : q.options?.find(o => o.isCorrect)?.text;
+                        const userAnswerText = q.type === 'mcq' 
+                          ? q.options?.find(o => o.id === answer.value)?.text 
+                          : answer.value;
+                        
+                        return (
+                          <div key={q.id} className="text-sm space-y-2 border-l-2 border-crimson/30 pl-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-crimson/60">{q.label}</span>
+                            <p className="font-bold text-apple-white">{q.text}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              <p className="text-crimson/80"><span className="text-[10px] uppercase font-black block opacity-50">Your Submission</span>{userAnswerText}</p>
+                              <p className="text-emerald-500/80"><span className="text-[10px] uppercase font-black block opacity-50">Correct Evidence</span>{correctAnswerText}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="flex justify-center pt-4">
-                {correctCount >= 3 ? (
-                  <button 
-                    onClick={() => setIsCaseFiled(true)}
-                    className="px-12 py-4 bg-emerald-600 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-500/20"
-                  >
-                    File case — close #0822
-                  </button>
-                ) : (
-                  <button 
-                    onClick={resetQuiz}
-                    className="px-12 py-4 bg-white/10 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-white/20 transition-all"
-                  >
-                    Review answers
-                  </button>
-                )}
+                <button 
+                  onClick={() => setIsCaseFiled(true)}
+                  className="px-12 py-4 bg-emerald-600 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-500/20"
+                >
+                  File case — close #0822
+                </button>
               </div>
             </motion.div>
           )}

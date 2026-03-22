@@ -1617,9 +1617,7 @@ function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStep
               <div className="min-w-0">
                 <h4 className="text-[10px] md:text-sm font-extrabold truncate">{s.name}</h4>
                 <p className="text-[8px] md:text-[10px] font-medium opacity-60 truncate">{s.role}</p>
-                {i === 0 && jatinEliminated && (
-                  <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mt-1 block">Eliminated</span>
-                )}
+                {/* Removed Eliminated tag */}
               </div>
             </div>
             {s.locked && (
@@ -1745,7 +1743,7 @@ function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStep
         </div>
 
         {/* Questions Selector - Moved outside scrollable area at the bottom */}
-        {!suspects[activeSuspect].locked && (activeSuspect !== 1 || anishStep < 6) && (activeSuspect !== 0 || !jatinEliminated) && (
+        {!suspects[activeSuspect].locked && (activeSuspect !== 1 || anishStep < 6) && (
           <div className="mt-1 pt-2 md:pt-4 border-t border-white/5">
             <div className="max-w-4xl mx-auto">
               {activeSuspect === 1 && (
@@ -1798,19 +1796,7 @@ function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStep
           </div>
         )}
 
-        {activeSuspect === 0 && jatinEliminated && (
-          <div className="absolute inset-0 flex items-center justify-center bg-obsidian/80 backdrop-blur-sm z-10">
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="text-center p-8 glass squircle border-emerald-500/30"
-            >
-              <CheckCircle size={48} className="text-emerald-500 mx-auto mb-4" />
-              <h4 className="text-xl font-black text-emerald-500 uppercase tracking-widest mb-2">Interrogation Successful</h4>
-              <p className="text-sm text-muted-grey max-w-xs mx-auto">Jatin has provided his full statement. Check your evidence files for the transcript.</p>
-            </motion.div>
-          </div>
-        )}
+        {/* Removed Jatin Eliminated overlay */}
       </div>
     </div>
   );
@@ -2266,16 +2252,7 @@ function ClueModal({
                   </div>
                 ) : null}
                 
-                {!inventory.includes(subClueId) && (
-                  <button 
-                    onClick={() => {
-                      onUnlock(subClueId);
-                    }}
-                    className="w-full py-4 bg-crimson text-white font-black rounded-xl hover:bg-crimson/90 transition-all shadow-lg shadow-crimson/20 uppercase tracking-widest mt-4"
-                  >
-                    Add to Evidence
-                  </button>
-                )}
+                {/* Removed duplicate Add to Evidence button */}
               </motion.div>
             )}
           </div>

@@ -344,6 +344,8 @@ export default function App() {
   const [hasFailedPhase1Quiz, setHasFailedPhase1Quiz] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSkipToPhase2, setShowSkipToPhase2] = useState(false);
+  const [skipPasscode, setSkipPasscode] = useState("");
+  const [skipError, setSkipError] = useState(false);
   const [showMiniGame1, setShowMiniGame1] = useState(false);
   const [anishInterrogationStep, setAnishInterrogationStep] = useState(0);
   const [anishTranscript, setAnishTranscript] = useState<{q: string, a: string}[]>([]);
@@ -696,51 +698,73 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
                 <Settings size={32} />
               </div>
               <h2 className="text-2xl font-black mb-4 text-center uppercase tracking-tighter text-orange-500">Developer Testing</h2>
-              <p className="text-muted-grey text-center mb-8">Skip to Phase 2?</p>
+              <p className="text-muted-grey text-center mb-6">Enter passcode to skip to Phase 2:</p>
+              
+              <div className="mb-8">
+                <input 
+                  type="password"
+                  value={skipPasscode}
+                  onChange={(e) => {
+                    setSkipPasscode(e.target.value);
+                    setSkipError(false);
+                  }}
+                  placeholder="****"
+                  maxLength={4}
+                  className={`w-full bg-white/5 border ${skipError ? 'border-crimson' : 'border-white/10'} rounded-xl py-4 text-center text-2xl tracking-[1em] font-mono focus:border-orange-500 outline-none transition-all`}
+                />
+                {skipError && (
+                  <p className="text-crimson text-xs text-center mt-2 font-bold uppercase tracking-widest">Invalid Passcode</p>
+                )}
+              </div>
               
               <div className="flex gap-4">
                 <button 
-                  onClick={() => setShowSkipToPhase2(false)}
+                  onClick={() => {
+                    setShowSkipToPhase2(false);
+                    setSkipPasscode("");
+                    setSkipError(false);
+                  }}
                   className="flex-1 py-3 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-all uppercase tracking-widest text-sm"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={() => {
-                    setPhase(2);
-                    
-                    // Unlock all Phase 1 and Phase 2 evidence
-                    setEvidence(prev => {
-                      const newEvidence = [...prev];
-                      const addIfMissing = (item: Evidence) => {
-                        if (!newEvidence.some(e => e.id === item.id)) {
-                          newEvidence.push(item);
-                        }
-                      };
+                    if (skipPasscode === "1212") {
+                      setPhase(2);
                       
-                      addIfMissing({
-                        id: "e_jatin_record",
-                        title: "Jatin's Next Questions Answered",
-                        description: "Full transcript of the initial questioning. Jatin claims ignorance of the lottery and mentions a 5 PM call where Aruna refused him money for paints.\n\n--- INTERROGATION TRANSCRIPT ---\n\nDET. PRABHAKAR: If she won a lottery, why was she working in a call center or a cab?\n\nJATIN: I didn't know about any lottery until you cops asked me.\n\nDET. PRABHAKAR: When was the last time you spoke to her?\n\nJATIN: I spoke to her on call at 5 pm to ask her for some money to buy paints and she denied.\n\nDET. PRABHAKAR: Where did the money go?\n\nJATIN: I don't know about any money.",
-                        location: "Police Station",
-                        type: "statement",
-                        unlocked: true,
-                        phase: 1
-                      });
-                      
-                      addIfMissing({
-                        id: "e_house_search",
-                        title: "Aruna's House Search",
-                        description: "Authorization for a thorough search of the RT Nagar apartment. We need to find where she hid that ticket or the cash.",
-                        location: "RT Nagar Apartment",
-                        type: "document",
-                        unlocked: true
-                      });
-                      
-                      addIfMissing({
-                        id: "e_pm_report",
-                        title: "Official Post-Mortem Report",
-                        description: `GOVERNMENT OF KARNATAKA - DEPARTMENT OF FORENSIC MEDICINE
+                      // Unlock all Phase 1 and Phase 2 evidence
+                      setEvidence(prev => {
+                        const newEvidence = [...prev];
+                        const addIfMissing = (item: Evidence) => {
+                          if (!newEvidence.some(e => e.id === item.id)) {
+                            newEvidence.push(item);
+                          }
+                        };
+                        
+                        addIfMissing({
+                          id: "e_jatin_record",
+                          title: "Jatin's Next Questions Answered",
+                          description: "Full transcript of the initial questioning. Jatin claims ignorance of the lottery and mentions a 5 PM call where Aruna refused him money for paints.\n\n--- INTERROGATION TRANSCRIPT ---\n\nDET. PRABHAKAR: If she won a lottery, why was she working in a call center or a cab?\n\nJATIN: I didn't know about any lottery until you cops asked me.\n\nDET. PRABHAKAR: When was the last time you spoke to her?\n\nJATIN: I spoke to her on call at 5 pm to ask her for some money to buy paints and she denied.\n\nDET. PRABHAKAR: Where did the money go?\n\nJATIN: I don't know about any money.",
+                          location: "Police Station",
+                          type: "statement",
+                          unlocked: true,
+                          phase: 1
+                        });
+                        
+                        addIfMissing({
+                          id: "e_house_search",
+                          title: "Aruna's House Search",
+                          description: "Authorization for a thorough search of the RT Nagar apartment. We need to find where she hid that ticket or the cash.",
+                          location: "RT Nagar Apartment",
+                          type: "document",
+                          unlocked: true
+                        });
+                        
+                        addIfMissing({
+                          id: "e_pm_report",
+                          title: "Official Post-Mortem Report",
+                          description: `GOVERNMENT OF KARNATAKA - DEPARTMENT OF FORENSIC MEDICINE
 COLUMBIA ASIA, HEBBAL - FORENSIC UNIT
 POST-MORTEM EXAMINATION REPORT
 ---------------------------------------------------------
@@ -760,34 +784,38 @@ INTERNAL FINDINGS:
 2. Toxicology: Negative for alcohol or common sedatives.
 
 CONCLUSION: Homicide. The victim was struck from behind, rendered unconscious, and pushed into the lake. The lack of struggle indicates a highly efficient, possibly professional, attack.`,
-                        location: "Columbia Asia Hebbal",
-                        type: "document",
-                        unlocked: true
+                          location: "Columbia Asia Hebbal",
+                          type: "document",
+                          unlocked: true
+                        });
+
+                        const phase1Ids = [
+                          "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
+                          "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report"
+                        ];
+                        return newEvidence.map(e => {
+                          if (phase1Ids.includes(e.id)) {
+                            return { ...e, unlocked: true };
+                          }
+                          return e;
+                        });
                       });
 
-                      const phase1Ids = [
-                        "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
-                        "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report"
-                      ];
-                      return newEvidence.map(e => {
-                        if (phase1Ids.includes(e.id)) {
-                          return { ...e, unlocked: true };
-                        }
-                        return e;
+                      setInventory(prev => {
+                        const allItems = [
+                          "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
+                          "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report",
+                          "e_cab_log", "e_anish_profile"
+                        ];
+                        const toAdd = allItems.filter(item => !prev.includes(item));
+                        return [...prev, ...toAdd];
                       });
-                    });
-
-                    setInventory(prev => {
-                      const allItems = [
-                        "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
-                        "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report",
-                        "e_cab_log", "e_anish_profile"
-                      ];
-                      const toAdd = allItems.filter(item => !prev.includes(item));
-                      return [...prev, ...toAdd];
-                    });
-                    
-                    setShowSkipToPhase2(false);
+                      
+                      setShowSkipToPhase2(false);
+                      setSkipPasscode("");
+                    } else {
+                      setSkipError(true);
+                    }
                   }}
                   className="flex-1 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-500 transition-all uppercase tracking-widest text-sm"
                 >

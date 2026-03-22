@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-manrope: "Manrope", sans-serif;
+  
+  --color-obsidian: #1A0F0E;
+  --color-crimson: #B91C1C;
+  --color-apple-white: #F5F5F7;
+  --color-muted-grey: #A1A1A6;
+}
+
+body {
+  @apply bg-obsidian text-apple-white font-manrope antialiased overflow-x-hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply tracking-tighter;
+}
+
+/* Custom scrollbar for noir feel */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #1A0F0E;
+}
+::-webkit-scrollbar-thumb {
+  background: #B91C1C;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #B91C1C;
+  border-radius: 10px;
+}
+
+.glass {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10;
+}
+
+.squircle {
+  @apply rounded-[2.5rem];
+}
+
+.crimson-glow {
+  box-shadow: 0 0 20px rgba(185, 28, 28, 0.2);
+}

@@ -357,6 +357,13 @@ export default function App() {
   const startPhase2 = () => {
     setPhase(2);
     setShowPhase1Quiz(false);
+    // Ensure initial Phase 2 evidence is in inventory
+    const initialPhase2Ids = evidence.filter(e => e.phase === 2 && e.unlocked).map(e => e.id);
+    setInventory(prev => {
+      const toAdd = initialPhase2Ids.filter(id => !prev.includes(id));
+      if (toAdd.length === 0) return prev;
+      return [...prev, ...toAdd];
+    });
   };
 
   // Check for all evidence collected to trigger Post Mortem Report
@@ -439,6 +446,16 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
       setShowFinalGame(true);
     }, 1000);
   };
+
+  // Sync inventory with unlocked evidence
+  useEffect(() => {
+    const unlockedIds = evidence.filter(e => e.unlocked).map(e => e.id);
+    setInventory(prev => {
+      const toAdd = unlockedIds.filter(id => !prev.includes(id));
+      if (toAdd.length === 0) return prev;
+      return [...prev, ...toAdd];
+    });
+  }, [evidence]);
 
   // Check for Phase 3 unlock
   useEffect(() => {

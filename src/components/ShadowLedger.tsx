@@ -563,14 +563,14 @@ export default function ShadowLedger({
         className="w-full max-w-5xl h-[85vh] bg-zinc-950 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-4 md:px-8 py-4 md:py-6 bg-zinc-900/50 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-crimson/20 flex items-center justify-center shrink-0">
-              <Smartphone className="text-crimson w-5 h-5 md:w-6 md:h-6" />
+        <div className="px-3 md:px-8 py-3 md:py-6 bg-zinc-900/50 border-b border-white/5 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 md:gap-4 min-w-0">
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl bg-crimson/20 flex items-center justify-center shrink-0">
+              <Smartphone className="text-crimson w-4 h-4 md:w-6 md:h-6" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg md:text-2xl font-black text-white uppercase tracking-tighter truncate">The Shadow Ledger</h2>
-              <div className="flex items-center gap-2 overflow-hidden">
+              <h2 className="text-sm md:text-2xl font-black text-white uppercase tracking-tighter truncate">The Shadow Ledger</h2>
+              <div className="hidden xs:flex items-center gap-2 overflow-hidden">
                 <span className="text-[8px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest truncate">Case Phase: Final Trace</span>
                 <div className="w-1 h-1 rounded-full bg-zinc-700 shrink-0" />
                 <span className="text-[8px] md:text-[10px] font-bold text-crimson uppercase tracking-widest truncate">Evidence: e_satish_owner</span>
@@ -578,7 +578,7 @@ export default function ShadowLedger({
             </div>
           </div>
           
-          <div className="flex items-center gap-3 md:gap-6 shrink-0">
+          <div className="flex items-center gap-2 md:gap-6 shrink-0">
             <div className="hidden sm:flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((p) => (
                 <div 
@@ -587,17 +587,17 @@ export default function ShadowLedger({
                 />
               ))}
             </div>
-            <div className="sm:hidden flex items-center gap-1">
+            <div className="flex items-center gap-1 bg-black/40 px-2 py-1 rounded-lg border border-white/5">
               <span className="text-[10px] font-black text-crimson">{page}</span>
               <span className="text-[10px] font-bold text-zinc-700">/</span>
               <span className="text-[10px] font-bold text-zinc-700">5</span>
             </div>
             <button 
               onClick={onClose}
-              className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/5 rounded-xl transition-colors text-zinc-500 hover:text-white border border-transparent hover:border-white/10"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-crimson/10 hover:bg-crimson/20 rounded-xl transition-all text-crimson hover:text-white border border-crimson/20 active:scale-95 shadow-lg shadow-crimson/5"
             >
-              <span className="sm:hidden text-[10px] font-black uppercase tracking-widest">Back</span>
-              <X size={18} className="md:w-6 md:h-6" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Back</span>
+              <X size={14} className="md:w-6 md:h-6" />
             </button>
           </div>
         </div>

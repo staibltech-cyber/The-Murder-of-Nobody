@@ -350,6 +350,9 @@ export default function App() {
   const [showSkipToPhase2, setShowSkipToPhase2] = useState(false);
   const [skipPasscode, setSkipPasscode] = useState("");
   const [skipError, setSkipError] = useState(false);
+  const [showInitialPasscode, setShowInitialPasscode] = useState(false);
+  const [initialPasscode, setInitialPasscode] = useState("");
+  const [initialPasscodeError, setInitialPasscodeError] = useState(false);
   const [showMiniGame1, setShowMiniGame1] = useState(false);
   const [anishInterrogationStep, setAnishInterrogationStep] = useState(0);
   const [anishTranscript, setAnishTranscript] = useState<{q: string, a: string}[]>([]);
@@ -491,7 +494,74 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
   return (
     <div className="min-h-[100dvh] bg-obsidian text-apple-white font-manrope selection:bg-crimson/30 overflow-x-hidden">
       <AnimatePresence mode="wait">
-        {screen === "landing" && <Landing onStart={() => setScreen("briefing")} />}
+        {screen === "landing" && <Landing onStart={() => setShowInitialPasscode(true)} />}
+
+        {showInitialPasscode && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-obsidian/95 backdrop-blur-xl"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="glass squircle max-w-sm w-full p-8 border-2 border-crimson/30 shadow-2xl shadow-crimson/20 text-center"
+            >
+              <div className="w-16 h-16 bg-crimson/10 rounded-full flex items-center justify-center mx-auto mb-6 text-crimson">
+                <Shield size={32} />
+              </div>
+              <h2 className="text-xl font-black mb-2 uppercase tracking-tighter">Event Access Required</h2>
+              <p className="text-muted-grey text-xs font-bold uppercase tracking-widest mb-6">Ask your host or wait for your host to give you the password</p>
+              
+              <div className="space-y-4">
+                <input 
+                  type="text"
+                  maxLength={4}
+                  value={initialPasscode}
+                  onChange={(e) => setInitialPasscode(e.target.value.toLowerCase())}
+                  placeholder="Enter 4-letter code"
+                  className={`w-full bg-white/5 border ${initialPasscodeError ? 'border-crimson' : 'border-white/10'} rounded-xl px-4 py-4 text-center tracking-[0.5em] font-mono text-xl focus:outline-none focus:border-crimson transition-all uppercase`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (initialPasscode === "tmon") {
+                        setShowInitialPasscode(false);
+                        setScreen("briefing");
+                      } else {
+                        setInitialPasscodeError(true);
+                        setTimeout(() => setInitialPasscodeError(false), 2000);
+                      }
+                    }
+                  }}
+                />
+                {initialPasscodeError && <p className="text-[10px] text-crimson font-black uppercase animate-pulse">Access Denied. Invalid Passcode.</p>}
+                
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setShowInitialPasscode(false)}
+                    className="flex-1 py-4 bg-white/5 text-muted-grey font-black rounded-xl hover:bg-white/10 transition-all uppercase tracking-widest text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      if (initialPasscode === "tmon") {
+                        setShowInitialPasscode(false);
+                        setScreen("briefing");
+                      } else {
+                        setInitialPasscodeError(true);
+                        setTimeout(() => setInitialPasscodeError(false), 2000);
+                      }
+                    }}
+                    className="flex-1 py-4 bg-crimson text-white font-black rounded-xl hover:bg-crimson/90 transition-all shadow-lg shadow-crimson/20 uppercase tracking-widest text-xs"
+                  >
+                    Authorize
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
         {screen === "briefing" && <Briefing onComplete={() => setScreen("terminal")} />}
         {screen !== "landing" && screen !== "briefing" && (
           <motion.div 

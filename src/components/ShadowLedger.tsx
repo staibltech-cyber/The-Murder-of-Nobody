@@ -426,13 +426,6 @@ export default function ShadowLedger({
               </button>
             </div>
           </div>
-
-          <div className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
-            <p className="text-[11px] text-zinc-400 leading-relaxed">
-              <span className="text-zinc-500 font-bold uppercase block mb-1">Intelligence Note:</span> 
-              The 'Sunday Ticket' refers to the winning lottery batch. This confirms the lottery was a pre-meditated payoff mechanism orchestrated by the Amber Group.
-            </p>
-          </div>
         </div>
       </div>
     </div>

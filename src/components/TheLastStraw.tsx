@@ -355,13 +355,29 @@ export function TheLastStraw({
                 </div>
               )}
 
-              <div className="flex justify-center pt-4">
+              <div className="flex flex-col items-center gap-6 pt-4">
                 <button 
                   onClick={() => setIsCaseFiled(true)}
                   className="px-12 py-4 bg-emerald-600 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-500/20"
                 >
                   File case — close #0822
                 </button>
+
+                {isCaseFiled && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                    className="text-center space-y-1"
+                  >
+                    <p className="text-amber-600 font-bold text-xs italic tracking-wide">
+                      'Jatin Bhanjara was seen in gowda pharma's corporate offices in Mathikere...'
+                    </p>
+                    <p className="text-amber-700 font-black uppercase text-[10px] tracking-[0.3em]">
+                      To be continued
+                    </p>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}

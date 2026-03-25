@@ -9,13 +9,14 @@ import {
   Search, Bell, User, LayoutGrid, Settings, LogOut, 
   FileText, MapPin, MessageSquare, Clock, Shield, 
   ChevronRight, AlertCircle, Camera, Database, 
-  Fingerprint, Eye, Info, X, Plus, CheckCircle, TrendingUp, ArrowLeft, ArrowRight, Gavel
+  Fingerprint, Eye, Info, X, Plus, CheckCircle, TrendingUp, ArrowLeft, ArrowRight, Gavel, Smartphone
 } from "lucide-react";
 import { ReactNode } from "react";
 import { LotteryAuditMiniGame } from "./components/LotteryAuditMiniGame";
 import { GowdaPharmaGame } from "./components/GowdaPharmaGame";
 import { ShreeVedantaGSTGame } from "./components/ShreeVedantaGSTGame";
 import { FinalCaseGame } from "./components/FinalCaseGame";
+import ShadowLedger from "./components/ShadowLedger";
 import { TheLastStraw } from "./components/TheLastStraw";
 
 // --- Types & Data ---
@@ -330,6 +331,9 @@ export default function App() {
   const [phase3Unlocked, setPhase3Unlocked] = useState(false);
   const [showPhase3Game, setShowPhase3Game] = useState(false);
   const [phase3GameStep, setPhase3GameStep] = useState(1);
+  const [showShadowLedger, setShowShadowLedger] = useState(false);
+  const [shadowLedgerPage, setShadowLedgerPage] = useState(1);
+  const [shadowLedgerComplete, setShadowLedgerComplete] = useState(false);
   const [showFinalGame, setShowFinalGame] = useState(false);
   const [finalGamePart, setFinalGamePart] = useState<1 | 2>(1);
   const [finalGameFindings, setFinalGameFindings] = useState<string[]>([]);
@@ -449,6 +453,13 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
     }, 1000);
   };
 
+  const handleShadowLedgerComplete = () => {
+    setShadowLedgerComplete(true);
+    setShowShadowLedger(false);
+    unlockEvidence("e_baton_recovery");
+    // Satish is now fully interrogatable
+  };
+
   // Sync inventory with unlocked evidence
   useEffect(() => {
     const unlockedIds = evidence.filter(e => e.unlocked).map(e => e.id);
@@ -537,6 +548,7 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
                     onBack={() => setScreen("terminal")}
                     jatinEliminated={jatinEliminated}
                     onJatinEliminated={() => setJatinEliminated(true)}
+                    shadowLedgerComplete={shadowLedgerComplete}
                     onProceedToLastStraw={() => {
                       setLastStrawUnlocked(true);
                       setScreen("the-last-straw");
@@ -614,6 +626,13 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
             setGowdaSolved={setGowdaSolved}
             showGowdaGame={showGowdaGame}
             setShowGowdaGame={setShowGowdaGame}
+            onShadowLedgerStart={() => {
+              if (finalGamePart2Solved) {
+                setShowShadowLedger(true);
+                setSelectedClue(null);
+              }
+            }}
+            finalGameSolved={finalGamePart2Solved}
           />
         )}
       </AnimatePresence>
@@ -857,6 +876,20 @@ CONCLUSION: Homicide. The victim was struck from behind, rendered unconscious, a
             onSuccess={handlePhase3Success}
             initialStep={phase3GameStep}
             onStepChange={setPhase3GameStep}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Shadow Ledger Game */}
+      <AnimatePresence>
+        {showShadowLedger && (
+          <ShadowLedger 
+            page={shadowLedgerPage}
+            setPage={setShadowLedgerPage}
+            onComplete={handleShadowLedgerComplete}
+            inventory={inventory}
+            onAddEvidence={addEvidence}
+            onClose={() => setShowShadowLedger(false)}
           />
         )}
       </AnimatePresence>
@@ -1343,7 +1376,7 @@ function EvidenceLocker({ evidence, inventory, onSelect, onUnlock }: { evidence:
   );
 }
 
-function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStepChange, anishTranscript, onAnishTranscriptChange, onBack, jatinEliminated, onJatinEliminated, onProceedToLastStraw }: { onAddEvidence: (e: Evidence) => void; phase: number; inventory: string[]; anishStep: number; onAnishStepChange: (step: number) => void; anishTranscript: {q: string, a: string}[]; onAnishTranscriptChange: (t: {q: string, a: string}[]) => void; onBack: () => void; jatinEliminated: boolean; onJatinEliminated: () => void; onProceedToLastStraw: () => void }) {
+function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStepChange, anishTranscript, onAnishTranscriptChange, onBack, jatinEliminated, onJatinEliminated, shadowLedgerComplete, onProceedToLastStraw }: { onAddEvidence: (e: Evidence) => void; phase: number; inventory: string[]; anishStep: number; onAnishStepChange: (step: number) => void; anishTranscript: {q: string, a: string}[]; onAnishTranscriptChange: (t: {q: string, a: string}[]) => void; onBack: () => void; jatinEliminated: boolean; onJatinEliminated: () => void; shadowLedgerComplete: boolean; onProceedToLastStraw: () => void }) {
   const [activeSuspect, setActiveSuspect] = useState(0);
   const [askedQuestions, setAskedQuestions] = useState<string[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
@@ -1471,8 +1504,12 @@ function Interrogation({ onAddEvidence, phase, inventory, anishStep, onAnishStep
       role: "Chartered Accountant",
       image: "https://picsum.photos/seed/accountant/200/200",
       profile: ["METICULOUS", "PARANOID"],
-      locked: !inventory.includes("e_satish_owner"),
-      lockedReason: inventory.includes("e_satish_owner") ? undefined : "Aruna's cab app log shows she drove a passenger named 'S. Nath' from Whitefield on January 5th — one day before she resigned.",
+      locked: !inventory.includes("e_satish_owner") || !shadowLedgerComplete,
+      lockedReason: !inventory.includes("e_satish_owner") 
+        ? "Aruna's cab app log shows she drove a passenger named 'S. Nath' from Whitefield on January 5th — one day before she resigned."
+        : !shadowLedgerComplete 
+          ? "You need to decrypt the Shadow Ledger from Rajan Kumar's phone to confront Satish Nath with the full conspiracy."
+          : undefined,
       borderColor: "border-purple-500",
       bgColor: "bg-purple-500/10",
       textColor: "text-purple-500",
@@ -1861,7 +1898,9 @@ function ClueModal({
   gowdaSolved,
   setGowdaSolved,
   showGowdaGame,
-  setShowGowdaGame
+  setShowGowdaGame,
+  onShadowLedgerStart,
+  finalGameSolved
 }: { 
   clue: Evidence; 
   allEvidence: Evidence[]; 
@@ -1875,6 +1914,8 @@ function ClueModal({
   setGowdaSolved: (v: boolean) => void;
   showGowdaGame: boolean;
   setShowGowdaGame: (v: boolean) => void;
+  onShadowLedgerStart?: () => void;
+  finalGameSolved?: boolean;
 }) {
   const [pincode, setPincode] = useState("");
   const [panInput, setPanInput] = useState("");
@@ -2836,6 +2877,15 @@ function ClueModal({
                 {clue.unlocked ? clue.description : "This data is currently encrypted or inaccessible. Specialized tools required."}
               </p>
             </div>
+
+            {clue.id === "e_satish_owner" && finalGameSolved && (
+              <button 
+                onClick={onShadowLedgerStart}
+                className="w-full py-6 bg-crimson text-white font-black rounded-2xl hover:bg-crimson/80 transition-all shadow-xl shadow-crimson/20 flex items-center justify-center gap-3 uppercase tracking-tighter text-xl"
+              >
+                <Smartphone size={24} /> ACCESS SHADOW LEDGER
+              </button>
+            )}
           </>
         )}
 

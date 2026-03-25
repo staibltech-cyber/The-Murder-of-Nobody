@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, MapPin, Shield, Plus, ChevronRight, 
-  CheckCircle, TrendingUp, FileText, AlertCircle 
+  CheckCircle, TrendingUp, FileText, AlertCircle, Smartphone 
 } from 'lucide-react';
 import { Evidence } from '../types';
 import { TranscriptView } from './TranscriptView';
@@ -10,6 +10,7 @@ import { GowdaPharmaGame } from './GowdaPharmaGame';
 
 interface ClueModalProps {
   clue: Evidence;
+  allEvidence: Evidence[];
   inventory: string[];
   gowdaSolved: boolean;
   showGowdaGame: boolean;
@@ -18,10 +19,15 @@ interface ClueModalProps {
   onClose: () => void;
   onUnlock: (id: string) => void;
   onSend: (id: string) => void;
+  onAddEvidence: (e: Evidence) => void;
+  onView: () => void;
+  onShadowLedgerStart?: () => void;
+  finalGameSolved?: boolean;
 }
 
 export const ClueModal: React.FC<ClueModalProps> = ({
   clue,
+  allEvidence,
   inventory,
   gowdaSolved,
   showGowdaGame,
@@ -30,6 +36,10 @@ export const ClueModal: React.FC<ClueModalProps> = ({
   onClose,
   onUnlock,
   onSend,
+  onAddEvidence,
+  onView,
+  onShadowLedgerStart,
+  finalGameSolved,
 }) => {
   const [pincode, setPincode] = useState('');
   const [panInput, setPanInput] = useState('');
@@ -439,6 +449,15 @@ export const ClueModal: React.FC<ClueModalProps> = ({
                 {clue.unlocked ? clue.description : "This data is currently encrypted or inaccessible. Specialized tools required."}
               </p>
             </div>
+
+            {clue.id === "e_satish_owner" && finalGameSolved && (
+              <button 
+                onClick={onShadowLedgerStart}
+                className="w-full py-6 bg-crimson text-white font-black rounded-2xl hover:bg-crimson/80 transition-all shadow-xl shadow-crimson/20 flex items-center justify-center gap-3 uppercase tracking-tighter text-xl"
+              >
+                <Smartphone size={24} /> ACCESS SHADOW LEDGER
+              </button>
+            )}
           </>
         )}
 

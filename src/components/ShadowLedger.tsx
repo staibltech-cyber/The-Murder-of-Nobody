@@ -467,7 +467,7 @@ export default function ShadowLedger({
               <User className="w-10 h-10 text-amber-500 mx-auto" />
               <div>
                 <h5 className="text-sm font-black text-white uppercase tracking-tight">Anish Ambedkar</h5>
-                <p className="text-[9px] text-amber-500/70 font-bold uppercase tracking-widest">The Architect</p>
+                <p className="text-[9px] text-amber-500/70 font-bold uppercase tracking-widest">The Mastermind</p>
               </div>
             </motion.div>
             <motion.div 

@@ -29,7 +29,7 @@ const QUESTIONS: Question[] = [
     id: 1,
     label: "QUESTION 01 OF 05",
     text: "What was Aruna Bhanjara's CIBIL credit score at the time of her death?",
-    source: "Source: CIBIL report — Phase 1 evidence locker",
+    source: "",
     type: 'text',
     correctAnswer: "420"
   },
@@ -37,7 +37,7 @@ const QUESTIONS: Question[] = [
     id: 2,
     label: "QUESTION 02 OF 05",
     text: "What is Satish Nath's professional designation?",
-    source: "Source: Anish Ambedkar interrogation transcript · NathCorp Advisory registration",
+    source: "",
     type: 'mcq',
     options: [
       { id: 'A', text: "Company secretary", feedback: "A company secretary handles filings and compliance — not financial accounts. Satish controlled Anish's money.", isCorrect: false },
@@ -49,8 +49,8 @@ const QUESTIONS: Question[] = [
   {
     id: 3,
     label: "QUESTION 03 OF 05",
-    text: "What age is recorded for the victim in the post-mortem report?",
-    source: "Source: Post-mortem examination report · Dr. Harish Reddy, Columbia Asia Hebbal",
+    text: "What was the age of the victim?",
+    source: "",
     type: 'text',
     correctAnswer: "28"
   },
@@ -58,7 +58,7 @@ const QUESTIONS: Question[] = [
     id: 4,
     label: "QUESTION 04 OF 05",
     text: "Who is charged with the murder of Aruna Bhanjara?",
-    source: "Source: Full case file · All phases",
+    source: "",
     type: 'mcq',
     options: [
       { id: 'A', text: "Jatin Bhanjara", feedback: "Jatin Bhanjara was at his gallery show from 20:00 to 22:40 on February 1st. The murder window is 22:00 to 23:30. He cannot be in two places. He is eliminated.", isCorrect: false },
@@ -71,7 +71,7 @@ const QUESTIONS: Question[] = [
     id: 5,
     label: "QUESTION 05 OF 05",
     text: "What object was used to incapacitate Aruna Bhanjara before she was pushed into Hebbal Lake?",
-    source: "Source: Post-mortem report · Lake recovery record · Tactical equipment dealer invoice",
+    source: "",
     type: 'mcq',
     options: [
       { id: 'A', text: "Steel pipe, unidentified", feedback: "The object has a confirmed serial number — ASP-BLR-0344. It is not unidentified. It was traced from the lake to a dealer to a payment.", isCorrect: false },

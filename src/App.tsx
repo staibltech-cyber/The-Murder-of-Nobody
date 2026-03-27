@@ -21,6 +21,19 @@ import { TheLastStraw } from "./components/TheLastStraw";
 
 // --- Types & Data ---
 
+const SAVE_KEY = "bangalore_noir_progress_v1";
+
+const getSavedState = () => {
+  if (typeof window === "undefined") return null;
+  const saved = localStorage.getItem(SAVE_KEY);
+  if (!saved) return null;
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    return null;
+  }
+};
+
 type Screen = "landing" | "briefing" | "terminal" | "evidence" | "interrogation" | "the-last-straw";
 
 interface Evidence {
@@ -322,30 +335,32 @@ function Phase1Quiz({ onSuccess, onFail }: { onSuccess: () => void; onFail: () =
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("landing");
-  const [evidence, setEvidence] = useState<Evidence[]>(INITIAL_EVIDENCE);
-  const [inventory, setInventory] = useState<string[]>([]);
-  const [viewedClues, setViewedClues] = useState<string[]>([]);
-  const [gowdaSolved, setGowdaSolved] = useState(false);
-  const [showGowdaGame, setShowGowdaGame] = useState(false);
-  const [phase3Unlocked, setPhase3Unlocked] = useState(false);
-  const [showPhase3Game, setShowPhase3Game] = useState(false);
-  const [phase3GameStep, setPhase3GameStep] = useState(1);
-  const [showShadowLedger, setShowShadowLedger] = useState(false);
-  const [shadowLedgerPage, setShadowLedgerPage] = useState(1);
-  const [shadowLedgerComplete, setShadowLedgerComplete] = useState(false);
-  const [showFinalGame, setShowFinalGame] = useState(false);
-  const [finalGamePart, setFinalGamePart] = useState<1 | 2>(1);
-  const [finalGameFindings, setFinalGameFindings] = useState<string[]>([]);
-  const [finalGamePart1Solved, setFinalGamePart1Solved] = useState(false);
-  const [finalGameLinks, setFinalGameLinks] = useState<{ [key: string]: string }>({ ab: '', bc: '', cd: '' });
-  const [finalGamePart2Solved, setFinalGamePart2Solved] = useState(false);
-  const [jatinEliminated, setJatinEliminated] = useState(false);
+  const savedState = useMemo(() => getSavedState(), []);
+
+  const [screen, setScreen] = useState<Screen>(savedState?.screen || "landing");
+  const [evidence, setEvidence] = useState<Evidence[]>(savedState?.evidence || INITIAL_EVIDENCE);
+  const [inventory, setInventory] = useState<string[]>(savedState?.inventory || []);
+  const [viewedClues, setViewedClues] = useState<string[]>(savedState?.viewedClues || []);
+  const [gowdaSolved, setGowdaSolved] = useState(savedState?.gowdaSolved || false);
+  const [showGowdaGame, setShowGowdaGame] = useState(savedState?.showGowdaGame || false);
+  const [phase3Unlocked, setPhase3Unlocked] = useState(savedState?.phase3Unlocked || false);
+  const [showPhase3Game, setShowPhase3Game] = useState(savedState?.showPhase3Game || false);
+  const [phase3GameStep, setPhase3GameStep] = useState(savedState?.phase3GameStep || 1);
+  const [showShadowLedger, setShowShadowLedger] = useState(savedState?.showShadowLedger || false);
+  const [shadowLedgerPage, setShadowLedgerPage] = useState(savedState?.shadowLedgerPage || 1);
+  const [shadowLedgerComplete, setShadowLedgerComplete] = useState(savedState?.shadowLedgerComplete || false);
+  const [showFinalGame, setShowFinalGame] = useState(savedState?.showFinalGame || false);
+  const [finalGamePart, setFinalGamePart] = useState<1 | 2>(savedState?.finalGamePart || 1);
+  const [finalGameFindings, setFinalGameFindings] = useState<string[]>(savedState?.finalGameFindings || []);
+  const [finalGamePart1Solved, setFinalGamePart1Solved] = useState(savedState?.finalGamePart1Solved || false);
+  const [finalGameLinks, setFinalGameLinks] = useState<{ [key: string]: string }>(savedState?.finalGameLinks || { ab: '', bc: '', cd: '' });
+  const [finalGamePart2Solved, setFinalGamePart2Solved] = useState(savedState?.finalGamePart2Solved || false);
+  const [jatinEliminated, setJatinEliminated] = useState(savedState?.jatinEliminated || false);
   const [selectedClue, setSelectedClue] = useState<Evidence | null>(null);
   const [showPostMortemAlert, setShowPostMortemAlert] = useState(false);
-  const [phase, setPhase] = useState<1 | 2 | 3>(1);
-  const [showPhase1Quiz, setShowPhase1Quiz] = useState(false);
-  const [hasFailedPhase1Quiz, setHasFailedPhase1Quiz] = useState(false);
+  const [phase, setPhase] = useState<1 | 2 | 3>(savedState?.phase || 1);
+  const [showPhase1Quiz, setShowPhase1Quiz] = useState(savedState?.showPhase1Quiz || false);
+  const [hasFailedPhase1Quiz, setHasFailedPhase1Quiz] = useState(savedState?.hasFailedPhase1Quiz || false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSkipToPhase2, setShowSkipToPhase2] = useState(false);
   const [skipPasscode, setSkipPasscode] = useState("");
@@ -353,15 +368,66 @@ export default function App() {
   const [showInitialPasscode, setShowInitialPasscode] = useState(false);
   const [initialPasscode, setInitialPasscode] = useState("");
   const [initialPasscodeError, setInitialPasscodeError] = useState(false);
-  const [showMiniGame1, setShowMiniGame1] = useState(false);
-  const [anishInterrogationStep, setAnishInterrogationStep] = useState(0);
-  const [anishTranscript, setAnishTranscript] = useState<{q: string, a: string}[]>([]);
-  const [lastStrawUnlocked, setLastStrawUnlocked] = useState(false);
-  const [lastStrawStep, setLastStrawStep] = useState(1);
-  const [lastStrawAnswers, setLastStrawAnswers] = useState<Record<number, { value: string; isCorrect: boolean; feedback?: string }>>({});
+  const [showMiniGame1, setShowMiniGame1] = useState(savedState?.showMiniGame1 || false);
+  const [anishInterrogationStep, setAnishInterrogationStep] = useState(savedState?.anishInterrogationStep || 0);
+  const [anishTranscript, setAnishTranscript] = useState<{q: string, a: string}[]>(savedState?.anishTranscript || []);
+  const [lastStrawUnlocked, setLastStrawUnlocked] = useState(savedState?.lastStrawUnlocked || false);
+  const [lastStrawStep, setLastStrawStep] = useState(savedState?.lastStrawStep || 1);
+  const [lastStrawAnswers, setLastStrawAnswers] = useState<Record<number, { value: string; isCorrect: boolean; feedback?: string }>>(savedState?.lastStrawAnswers || {});
   const [lastStrawTypedValue, setLastStrawTypedValue] = useState("");
-  const [lastStrawQuizComplete, setLastStrawQuizComplete] = useState(false);
-  const [lastStrawCaseFiled, setLastStrawCaseFiled] = useState(false);
+  const [lastStrawQuizComplete, setLastStrawQuizComplete] = useState(savedState?.lastStrawQuizComplete || false);
+  const [lastStrawCaseFiled, setLastStrawCaseFiled] = useState(savedState?.lastStrawCaseFiled || false);
+
+  const resetGame = () => {
+    if (window.confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+      localStorage.removeItem(SAVE_KEY);
+      window.location.reload();
+    }
+  };
+
+  useEffect(() => {
+    const gameState = {
+      screen,
+      evidence,
+      inventory,
+      viewedClues,
+      gowdaSolved,
+      showGowdaGame,
+      phase3Unlocked,
+      showPhase3Game,
+      phase3GameStep,
+      showShadowLedger,
+      shadowLedgerPage,
+      shadowLedgerComplete,
+      showFinalGame,
+      finalGamePart,
+      finalGameFindings,
+      finalGamePart1Solved,
+      finalGameLinks,
+      finalGamePart2Solved,
+      jatinEliminated,
+      phase,
+      showPhase1Quiz,
+      hasFailedPhase1Quiz,
+      showMiniGame1,
+      anishInterrogationStep,
+      anishTranscript,
+      lastStrawUnlocked,
+      lastStrawStep,
+      lastStrawAnswers,
+      lastStrawQuizComplete,
+      lastStrawCaseFiled,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(gameState));
+  }, [
+    screen, evidence, inventory, viewedClues, gowdaSolved, showGowdaGame,
+    phase3Unlocked, showPhase3Game, phase3GameStep, showShadowLedger,
+    shadowLedgerPage, shadowLedgerComplete, showFinalGame, finalGamePart,
+    finalGameFindings, finalGamePart1Solved, finalGameLinks, finalGamePart2Solved,
+    jatinEliminated, phase, showPhase1Quiz, hasFailedPhase1Quiz, showMiniGame1,
+    anishInterrogationStep, anishTranscript, lastStrawUnlocked, lastStrawStep,
+    lastStrawAnswers, lastStrawQuizComplete, lastStrawCaseFiled
+  ]);
 
   const startPhase2 = () => {
     setPhase(2);
@@ -570,7 +636,12 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
             exit={{ opacity: 0 }}
             className="flex flex-col md:flex-row h-[100dvh] md:h-screen overflow-hidden p-2 md:p-6 gap-2 md:gap-6"
           >
-            <Sidebar current={screen} setScreen={setScreen} onExit={() => setShowExitConfirm(true)} lastStrawUnlocked={lastStrawUnlocked} />
+            <Sidebar 
+              current={screen} 
+              setScreen={setScreen} 
+              onExit={() => setShowExitConfirm(true)} 
+              lastStrawUnlocked={lastStrawUnlocked} 
+            />
             
             <main className="flex-1 flex flex-col gap-2 md:gap-6 overflow-hidden">
               <Header 
@@ -806,54 +877,55 @@ The trauma was incapacitating. The victim was struck from behind with immense fo
                 )}
               </div>
               
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => {
-                    setShowSkipToPhase2(false);
-                    setSkipPasscode("");
-                    setSkipError(false);
-                  }}
-                  className="flex-1 py-3 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-all uppercase tracking-widest text-sm"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={() => {
-                    if (skipPasscode === "1212") {
-                      setPhase(2);
-                      
-                      // Unlock all Phase 1 and Phase 2 evidence
-                      setEvidence(prev => {
-                        const newEvidence = [...prev];
-                        const addIfMissing = (item: Evidence) => {
-                          if (!newEvidence.some(e => e.id === item.id)) {
-                            newEvidence.push(item);
-                          }
-                        };
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => {
+                      setShowSkipToPhase2(false);
+                      setSkipPasscode("");
+                      setSkipError(false);
+                    }}
+                    className="flex-1 py-3 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-all uppercase tracking-widest text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => {
+                      if (skipPasscode === "1212") {
+                        setPhase(2);
                         
-                        addIfMissing({
-                          id: "e_jatin_record",
-                          title: "Jatin's Next Questions Answered",
-                          description: "Full transcript of the initial questioning. Jatin claims ignorance of the lottery and mentions a 5 PM call where Aruna refused him money for paints.\n\n--- INTERROGATION TRANSCRIPT ---\n\nDET. PRABHAKAR: If she won a lottery, why was she working in a call center or a cab?\n\nJATIN: I didn't know about any lottery until you cops asked me.\n\nDET. PRABHAKAR: When was the last time you spoke to her?\n\nJATIN: I spoke to her on call at 5 pm to ask her for some money to buy paints and she denied.\n\nDET. PRABHAKAR: Where did the money go?\n\nJATIN: I don't know about any money.",
-                          location: "Police Station",
-                          type: "statement",
-                          unlocked: true,
-                          phase: 1
-                        });
-                        
-                        addIfMissing({
-                          id: "e_house_search",
-                          title: "Aruna's House Search",
-                          description: "Authorization for a thorough search of the RT Nagar apartment. We need to find where she hid that ticket or the cash.",
-                          location: "RT Nagar Apartment",
-                          type: "document",
-                          unlocked: true
-                        });
-                        
-                        addIfMissing({
-                          id: "e_pm_report",
-                          title: "Official Post-Mortem Report",
-                          description: `GOVERNMENT OF KARNATAKA - DEPARTMENT OF FORENSIC MEDICINE
+                        // Unlock all Phase 1 and Phase 2 evidence
+                        setEvidence(prev => {
+                          const newEvidence = [...prev];
+                          const addIfMissing = (item: Evidence) => {
+                            if (!newEvidence.some(e => e.id === item.id)) {
+                              newEvidence.push(item);
+                            }
+                          };
+                          
+                          addIfMissing({
+                            id: "e_jatin_record",
+                            title: "Jatin's Next Questions Answered",
+                            description: "Full transcript of the initial questioning. Jatin claims ignorance of the lottery and mentions a 5 PM call where Aruna refused him money for paints.\n\n--- INTERROGATION TRANSCRIPT ---\n\nDET. PRABHAKAR: If she won a lottery, why was she working in a call center or a cab?\n\nJATIN: I didn't know about any lottery until you cops asked me.\n\nDET. PRABHAKAR: When was the last time you spoke to her?\n\nJATIN: I spoke to her on call at 5 pm to ask her for some money to buy paints and she denied.\n\nDET. PRABHAKAR: Where did the money go?\n\nJATIN: I don't know about any money.",
+                            location: "Police Station",
+                            type: "statement",
+                            unlocked: true,
+                            phase: 1
+                          });
+                          
+                          addIfMissing({
+                            id: "e_house_search",
+                            title: "Aruna's House Search",
+                            description: "Authorization for a thorough search of the RT Nagar apartment. We need to find where she hid that ticket or the cash.",
+                            location: "RT Nagar Apartment",
+                            type: "document",
+                            unlocked: true
+                          });
+                          
+                          addIfMissing({
+                            id: "e_pm_report",
+                            title: "Official Post-Mortem Report",
+                            description: `GOVERNMENT OF KARNATAKA - DEPARTMENT OF FORENSIC MEDICINE
 COLUMBIA ASIA, HEBBAL - FORENSIC UNIT
 POST-MORTEM EXAMINATION REPORT
 ---------------------------------------------------------
@@ -873,42 +945,49 @@ INTERNAL FINDINGS:
 2. Toxicology: Negative for alcohol or common sedatives.
 
 CONCLUSION: Homicide. The victim was struck from behind, rendered unconscious, and pushed into the lake. The lack of struggle indicates a highly efficient, possibly professional, attack.`,
-                          location: "Columbia Asia Hebbal",
-                          type: "document",
-                          unlocked: true
+                            location: "Columbia Asia Hebbal",
+                            type: "document",
+                            unlocked: true
+                          });
+
+                          const phase1Ids = [
+                            "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
+                            "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report"
+                          ];
+                          return newEvidence.map(e => {
+                            if (phase1Ids.includes(e.id)) {
+                              return { ...e, unlocked: true };
+                            }
+                            return e;
+                          });
                         });
 
-                        const phase1Ids = [
-                          "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
-                          "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report"
-                        ];
-                        return newEvidence.map(e => {
-                          if (phase1Ids.includes(e.id)) {
-                            return { ...e, unlocked: true };
-                          }
-                          return e;
+                        setInventory(prev => {
+                          const allItems = [
+                            "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
+                            "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report",
+                            "e_cab_log", "e_anish_profile"
+                          ];
+                          const toAdd = allItems.filter(item => !prev.includes(item));
+                          return [...prev, ...toAdd];
                         });
-                      });
-
-                      setInventory(prev => {
-                        const allItems = [
-                          "e_pm", "e_alibi", "e_jatin_record", "e_house_search", 
-                          "e_lottery", "e_cibil", "e_paints", "e_resignation", "e_cab_invoices", "e_pm_report",
-                          "e_cab_log", "e_anish_profile"
-                        ];
-                        const toAdd = allItems.filter(item => !prev.includes(item));
-                        return [...prev, ...toAdd];
-                      });
-                      
-                      setShowSkipToPhase2(false);
-                      setSkipPasscode("");
-                    } else {
-                      setSkipError(true);
-                    }
-                  }}
-                  className="flex-1 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-500 transition-all uppercase tracking-widest text-sm"
+                        
+                        setShowSkipToPhase2(false);
+                        setSkipPasscode("");
+                      } else {
+                        setSkipError(true);
+                      }
+                    }}
+                    className="flex-1 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-500 transition-all uppercase tracking-widest text-sm"
+                  >
+                    Skip to Phase 2
+                  </button>
+                </div>
+                <button 
+                  onClick={resetGame}
+                  className="w-full py-3 bg-crimson/20 text-crimson border border-crimson/30 font-bold rounded-xl hover:bg-crimson/30 transition-all uppercase tracking-widest text-sm"
                 >
-                  Skip to Phase 2
+                  Reset Progress
                 </button>
               </div>
             </motion.div>
@@ -1148,7 +1227,6 @@ function Sidebar({ current, setScreen, onExit, lastStrawUnlocked }: { current: S
       </nav>
 
       <div className="hidden md:flex flex-col gap-6 items-center mt-auto">
-        <button className="text-muted-grey hover:text-crimson transition-colors"><Settings size={22} /></button>
         <button onClick={onExit} className="text-muted-grey hover:text-crimson transition-colors"><LogOut size={22} /></button>
       </div>
     </motion.aside>
